@@ -13,7 +13,7 @@ class InformacoesView extends StatelessWidget {
     final nome = controller.usuarioLogadoNome.isEmpty
         ? 'Nome do usuário'
         : controller.usuarioLogadoNome;
-    final email = controller.usuarioLogadoEmail.isEmpty
+    final email = controller.usuarioLogadoEmail.isEmpty  
         ? 'email@exemplo.com'
         : controller.usuarioLogadoEmail;
     return Scaffold(
