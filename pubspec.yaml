@@ -7,11 +7,15 @@ environment:
   sdk: ^3.11.0
 
 dependencies:
-  device_preview: ^1.3.1
-  device_preview_plus: ^2.5.5
   flutter:
     sdk: flutter
-  get_it: ^9.2.1
+  cupertino_icons: any
+  device_preview: any
+  shared_preferences: any
+  firebase_core: any
+  firebase_auth: any
+  cloud_firestore: any
+  get_it: any
 
 dev_dependencies:
   flutter_test:

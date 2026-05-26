@@ -37,6 +37,7 @@ class PersonalizacaoView extends StatelessWidget {
                   title: const Text('Ativar notificações'),
                   value: controller.aceitar,
                   onChanged: controller.atualizarAceitar,
+                  // ignore: deprecated_member_use
                   activeColor: const Color(0xFF5865F2),
                 ),
                 Padding(

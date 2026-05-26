@@ -7,10 +7,13 @@ import 'package:flutter/material.dart';
 
 class PerfAmigoView extends StatelessWidget {
   final String nomeAmigo;
+//  final serve pra criar uma variável global para acessar
+                          // o GetIt em toda o app, sem precisar passar a instancia
 
-  const PerfAmigoView({required this.nomeAmigo, super.key});
+  const PerfAmigoView({required this.nomeAmigo, super.key}); // construtor 
+   //      para receber o nome do amigo, e super.key é pra passar a chave pro widget
 
-  @override
+  @override // construção da tela, usando Scaffold, AppBar, etc
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

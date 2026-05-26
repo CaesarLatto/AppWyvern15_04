@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class AddServerView extends StatelessWidget {
   const AddServerView({super.key});
 
-  static const List<String> categorias = [
+  static const List<String> categorias = [ // lista de categorias 
+                       //para os servidores que estão no gridview
     'Games',
     'Animes',
     'Conversa',

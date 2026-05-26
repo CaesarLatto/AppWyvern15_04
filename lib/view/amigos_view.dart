@@ -7,7 +7,8 @@ class AmigosView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final amigos = List<String>.generate(13, (index) => 'fulano${index + 1}');
-
+ // list generate é uma função que gera uma lista de strings, com o nome dos fulano,
+      // usando o index para criar nomes diferentes, e o +1 é pra começar do 1, e não do 0 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Amigos'),

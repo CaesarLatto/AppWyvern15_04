@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "233766981104",
+    "project_id": "cesar-manha-prog-disp-moveis",
+    "storage_bucket": "cesar-manha-prog-disp-moveis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233766981104:android:9c33efd2396ea1cc9f6135",
+        "android_client_info": {
+          "package_name": "com.example.app_exemplo_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5RfgaHlo3uI1JqV5NZHnpcISB0GF3ZjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233766981104:android:a68e29944f4808499f6135",
+        "android_client_info": {
+          "package_name": "com.example.app_radical_5_telas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5RfgaHlo3uI1JqV5NZHnpcISB0GF3ZjQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

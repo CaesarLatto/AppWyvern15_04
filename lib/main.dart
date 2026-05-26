@@ -1,7 +1,13 @@
-import 'controller/iniciarlogin_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:get_it/get_it.dart';
+
+// --- Firebase Imports ---
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; 
+
+// --- Your Views & Controllers ---
+import 'controller/iniciarlogin_controller.dart';
 import 'view/cadastro_view.dart';
 import 'view/iniciarlogin_view.dart';
 import 'view/recuperar_senha_view.dart';
@@ -12,16 +18,23 @@ import 'view/informacoes_view.dart';
 import 'view/personalizacao_view.dart';
 import 'view/sobre_view.dart';
 
+final g = GetIt.instance; //  final serve pra criar uma variável global para acessar
+                          // o GetIt em toda o app, sem precisar passar a instancia
 
-
-final g = GetIt.instance;
-
-void main() {
+// Changed to async to allow Firebase to load before the app starts
+void main() async {
+  // Required so Flutter doesn't draw the UI before Firebase is ready
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Wakes up Firebase using your specific project settings
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   g.registerSingleton<IniciarloginController>(IniciarloginController());
 
   runApp(
-    DevicePreview(builder: (context) => MainApp()),
+    DevicePreview(builder: (context) => const MainApp()),
   );
 }
 
@@ -37,7 +50,7 @@ class MainApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo Wyvern',
-      theme: ThemeData(
+      theme: ThemeData( // theme serve para personalizar o tema do app, fontes etc
         brightness: Brightness.dark,
         primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: const Color(0xFF36393E),
@@ -61,7 +74,7 @@ class MainApp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
       ),
-      initialRoute: 'iniciarlogin',
+      initialRoute: 'iniciarlogin', // define a tela inicial, e logo abaixo, as rotas
       routes: {
         'iniciarlogin': (context) => const IniciarloginView(),
         'recuperar_senha': (context) => const RecuperarSenhaView(),
@@ -72,7 +85,8 @@ class MainApp extends StatelessWidget {
         'informacoes': (context) => const InformacoesView(),
         'personalizacao': (context) => const PersonalizacaoView(),
         'sobre': (context) => const SobreView(),
-      },
+      }, // cada um desses é uma rota, uma tela do app, e o 
+         //nome da rota é o que vai ser usado para navegar entre as telas
     );
   }
 }
