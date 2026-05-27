@@ -130,7 +130,7 @@ class _InformacoesViewState extends State<InformacoesView> {
     });
 
     try {
-      // RF007: consumo de API REST externa com tratamento de exceções e parse JSON
+      // Firebase RF 007, Consumo de API: consumo de API REST externa com tratamento de exceções e parse JSON
       final response = await http.get(Uri.parse('https://api.adviceslip.com/advice')).timeout(
             const Duration(seconds: 10),
           );
@@ -171,11 +171,12 @@ class _InformacoesViewState extends State<InformacoesView> {
         title: const Text('Sobre o usuário'),
         backgroundColor: const Color(0xFF2F3136),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
             const SizedBox(height: 24),
             const CircleAvatar(
               radius: 48,
@@ -284,7 +285,7 @@ class _InformacoesViewState extends State<InformacoesView> {
                 ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF5865F2),
@@ -307,6 +308,7 @@ class _InformacoesViewState extends State<InformacoesView> {
               child: const Text('Deletar Conta'),
             ),
           ],
+          ),
         ),
       ),
     );
