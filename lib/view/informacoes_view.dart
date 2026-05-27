@@ -86,7 +86,7 @@ class _InformacoesViewState extends State<InformacoesView> {
     }
 
     try {
-      // Firebase RF 004, Atualização de Dados: atualiza apenas o campo 'nome' no documento do usuário usando .update()
+      // Criterio 004: Atualização do nome do perfil no Firestore com feedback de sucesso/erro.
       await FirebaseFirestore.instance.collection('usuarios').doc(user.uid).update({
         'nome': novoNome,
       });
@@ -99,7 +99,7 @@ class _InformacoesViewState extends State<InformacoesView> {
 
       // Atualizar displayName no Firebase Auth para manter consistência
       try {
-        // Firebase RF 004, Atualização de Dados (opcional): manter displayName do Firebase Auth consistente com Firestore
+        // Criterio 004: Sincronização do displayName do Firebase Auth com o nome atualizado no Firestore.
         await user.updateDisplayName(novoNome);
       } catch (_) {
         // não bloquear a UX se o update do Auth falhar
@@ -130,7 +130,7 @@ class _InformacoesViewState extends State<InformacoesView> {
     });
 
     try {
-      // Firebase RF 007, Consumo de API: consumo de API REST externa com tratamento de exceções e parse JSON
+      // Criterio 007: Consumo de uma API pública com tratamento de erro e parse JSON.
       final response = await http.get(Uri.parse('https://api.adviceslip.com/advice')).timeout(
             const Duration(seconds: 10),
           );

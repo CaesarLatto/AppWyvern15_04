@@ -43,7 +43,7 @@ class _IniciarloginViewState extends State<IniciarloginView> {
     final controller = GetIt.instance<IniciarloginController>();
 
     try {
-      // Firebase RF 001, Autenticação de Usuários: autentica com Firebase Auth; trata erros FirebaseAuthException abaixo
+      // Criterio 001: Login com e-mail/senha e feedback visual do resultado. O código começa nesta linha e vai até o fim da lógica de login.
       final credential = await _authService.signIn(
         email: email,
         password: senha,

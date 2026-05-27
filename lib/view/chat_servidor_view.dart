@@ -44,7 +44,7 @@ class _ChatServidorViewState extends State<ChatServidorView> {
     });
 
     try {
-      // Firebase RF 003, Inserção de Dados: insere mensagem em 'servidores/{servidorId}/mensagens'
+      // Criterio 003: Inserção da mensagem na subcoleção do servidor, com remetente e timestamp.
       // Campos: texto, remetenteNome, remetenteEmail, enviadoEm (serverTimestamp)
       await FirebaseFirestore.instance
           .collection('servidores')
@@ -131,7 +131,7 @@ class _ChatServidorViewState extends State<ChatServidorView> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final currentUserEmail = user?.email ?? '';
-    // Firebase RF 005, Recuperação de Dados: stream em tempo real da subcoleção 'mensagens'
+    // Criterio 005: Leitura em tempo real das mensagens do chat na subcoleção do servidor.
     // Ordenado por 'enviadoEm' desc para uso com ListView(reverse: true)
     final messagesStream = FirebaseFirestore.instance
         .collection('servidores')

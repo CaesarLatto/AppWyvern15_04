@@ -42,7 +42,7 @@ class _CadastroViewState extends State<CadastroView> {
     final controller = GetIt.instance<IniciarloginController>();
 
     try {
-      // Firebase RF 002, Registro de Usuários: cria credencial no Firebase Auth (email+senha)
+      // Criterio 002: Registro com validação e criação de conta no Firebase Auth. O código começa nesta linha.
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: senha,
@@ -56,7 +56,7 @@ class _CadastroViewState extends State<CadastroView> {
         );
       }
 
-      // Firebase RF 002, Registro de Usuários: salva perfil do usuário em Firestore imediatamente após criação
+      // Criterio 002: Salvamento dos dados do usuário em Firestore após o cadastro. O código começa nesta linha.
       // Campos: nome, email, nome_lowercase (para busca case-insensitive), criadoEm
       await _firestore.collection('usuarios').doc(uid).set({
         'nome': nome,
@@ -161,8 +161,12 @@ Widget build(BuildContext context) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Por favor, insira uma senha';
                   }
-                  if (value.trim().length < 6) {
-                    return 'A senha deve ter pelo menos 6 caracteres';
+                  if (value.trim().length < 8) {
+                    return 'A senha deve ter pelo menos 8 caracteres';
+                  }
+                  final regex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$');
+                  if (!regex.hasMatch(value.trim())) {
+                    return 'Use maiúsculas, minúsculas, números e caracteres especiais.';
                   }
                   return null;
                 },

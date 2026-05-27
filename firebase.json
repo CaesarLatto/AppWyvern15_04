@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"cesar-manha-prog-disp-moveis","appId":"1:233766981104:android:a68e29944f4808499f6135","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cesar-manha-prog-disp-moveis","configurations":{"android":"1:233766981104:android:a68e29944f4808499f6135","ios":"1:233766981104:ios:fdcf9c8c083423599f6135","web":"1:233766981104:web:114b714534c5eb629f6135"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cesar-manha-prog-disp-moveis",
+          "appId": "1:233766981104:android:a68e29944f4808499f6135",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cesar-manha-prog-disp-moveis",
+          "configurations": {
+            "android": "1:233766981104:android:a68e29944f4808499f6135",
+            "ios": "1:233766981104:ios:fdcf9c8c083423599f6135",
+            "web": "1:233766981104:web:114b714534c5eb629f6135"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "(build/web)",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

@@ -55,7 +55,8 @@ class AddServerView extends StatelessWidget {
                   final categoria = categorias[index];
                   final nome = 'Servidor de $categoria';
                   final docRef = FirebaseFirestore.instance.collection('servidores').doc();
-                  // Firebase RF 003, Inserção de Dados: insere documento em 'servidores' com os campos exigidos
+                  final categoriaRef = FirebaseFirestore.instance.collection('categorias').doc(categoria.toLowerCase());
+                  // Criterio 003: Inserção de dados em 'servidores' com os campos obrigatórios e acesso do usuário logado.
                   // id (doc id), nome, nome_lowercase (para busca), categoria, criadoEm e donoId (uid do usuário)
                   final data = {
                     'id': docRef.id,
@@ -65,9 +66,17 @@ class AddServerView extends StatelessWidget {
                     'criadoEm': FieldValue.serverTimestamp(),
                     'donoId': user.uid,
                   };
+                  final categoriaData = {
+                    'nome': categoria,
+                    'nome_lowercase': categoria.toLowerCase(),
+                    'donoId': user.uid,
+                    'criadoEm': FieldValue.serverTimestamp(),
+                    'qtdServidores': FieldValue.increment(1),
+                  };
 
                   try {
                     await docRef.set(data);
+                    await categoriaRef.set(categoriaData, SetOptions(merge: true));
                     if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

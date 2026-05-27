@@ -33,7 +33,7 @@ class MenuPrincipalView extends StatelessWidget {
       );
     }
 
-    // Firebase RF 005, Recuperação de Dados: stream em tempo real filtrando 'servidores' pelo dono (donoId)
+    // Criterio 005: Leitura em tempo real dos servidores do usuário com StreamBuilder.
     // Usado em StreamBuilder para atualizar a UI automaticamente quando documentos mudam
     final stream = FirebaseFirestore.instance
       .collection('servidores')
