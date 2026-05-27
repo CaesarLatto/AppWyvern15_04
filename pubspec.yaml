@@ -16,6 +16,7 @@ dependencies:
   firebase_auth: any
   cloud_firestore: any
   get_it: any
+  http: any
 
 dev_dependencies:
   flutter_test:

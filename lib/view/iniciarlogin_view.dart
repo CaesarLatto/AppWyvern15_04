@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import '../controller/iniciarlogin_controller.dart';
+import '../services/auth_service.dart';
 
 class IniciarloginView extends StatefulWidget{
   const IniciarloginView({super.key});
@@ -16,6 +18,9 @@ class _IniciarloginViewState extends State<IniciarloginView> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
 
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+
   @override
   // função para descartar os controllers quando sai da tela
   void dispose(){
@@ -24,38 +29,80 @@ class _IniciarloginViewState extends State<IniciarloginView> {
     super.dispose();
   }
 
-  void _fazerLogin(){
-    // valida todos os campos/validadores do formulário
-    if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim();
-      final senha = _senhaController.text.trim();
-      final controller = GetIt.instance<IniciarloginController>();
+  Future<void> _fazerLogin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-      if (!controller.isEmailCadastrado(email)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('E-mail não cadastrado')),
-        );
-        return;
-      }
+    setState(() {
+      _isLoading = true;
+    });
 
-      if (!controller.verificarLogin(email, senha)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Credenciais incorretas')),
-        );
-        return;
-      }
+    final email = _emailController.text.trim();
+    final senha = _senhaController.text.trim();
+    final controller = GetIt.instance<IniciarloginController>();
 
-      // Login bem-sucedido
-      controller.definirUsuarioLogado(email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login realizado com sucesso! Bem-vindo, $email')),
+    try {
+      // RF001: autentica com Firebase Auth; trata erros FirebaseAuthException abaixo
+      final credential = await _authService.signIn(
+        email: email,
+        password: senha,
       );
 
-      // Navegar para a página principal
+      if (!mounted) return;
+      // RF001: armazena estado do usuário (email/nome) no controller para compartilhar entre telas
+      controller.definirUsuarioLogado(email, credential.user?.displayName);
+
+      final uid = credential.user?.uid;
+      if (uid != null) {
+        try {
+          final fetchedName = await _authService.fetchUserName(uid);
+          if (fetchedName != null && mounted) {
+            controller.definirUsuarioLogado(email, fetchedName);
+          }
+        } catch (_) {
+          // Não bloqueia a navegação caso a leitura do perfil falhe.
+        }
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login realizado com sucesso! Bem-vindo, ${controller.usuarioLogadoNome.isNotEmpty ? controller.usuarioLogadoNome : email}')),
+      );
+
+      // RF001: navega para a tela principal após login bem-sucedido
       Navigator.pushReplacementNamed(context, 'menuprincipal');
+    } on FirebaseAuthException catch (e) {
+      String mensagem;
+      if (e.code == 'user-not-found') {
+        mensagem = 'Usuário não encontrado. Verifique o e-mail informado.';
+      } else if (e.code == 'wrong-password') {
+        mensagem = 'Senha incorreta. Tente novamente.';
+      } else if (e.code == 'invalid-email') {
+        mensagem = 'E-mail inválido. Verifique o formato.';
+      } else if (e.code == 'user-disabled') {
+        mensagem = 'Conta desabilitada. Contate o suporte.';
+      } else {
+        mensagem = 'Erro ao entrar: ${e.message ?? 'tente novamente.'}';
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(mensagem)),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro inesperado ao entrar: ${error.toString()}')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +161,8 @@ class _IniciarloginViewState extends State<IniciarloginView> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Por favor, insira sua senha';
                     }
-                    if(value.trim().length < 8) {
-                      return 'A senha deve conter pelo menos 8 caracteres.';
+                    if(value.trim().length < 6) {
+                      return 'A senha deve conter pelo menos 6 caracteres.';
                     }
                     return null;
                   },
@@ -137,17 +184,28 @@ class _IniciarloginViewState extends State<IniciarloginView> {
                  // botão de login
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _fazerLogin,
-                  child: Text('Entrar'),
+                  onPressed: _isLoading ? null : _fazerLogin,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Entrar'),
                 ),
                 const SizedBox(height: 16),
 
                 //link pra ir pra tela de cadastro
                 TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, 'cadastro');
-                  },
-                  child: Text('Não tem uma conta? Cadastre-se')
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          Navigator.pushNamed(context, 'cadastro');
+                        },
+                  child: const Text('Não tem uma conta? Cadastre-se'),
                 ),
               ],
             ),

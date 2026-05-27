@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; 
 
-// --- Your Views & Controllers ---
+// ---  Views  Controllers ---
 import 'controller/iniciarlogin_controller.dart';
 import 'view/cadastro_view.dart';
 import 'view/iniciarlogin_view.dart';
@@ -26,7 +26,7 @@ void main() async {
   // Required so Flutter doesn't draw the UI before Firebase is ready
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Wakes up Firebase using your specific project settings
+  // Wakes up Firebase using the configured options for the current platform.
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

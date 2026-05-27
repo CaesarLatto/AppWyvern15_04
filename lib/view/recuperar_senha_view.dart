@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import '../controller/iniciarlogin_controller.dart';
+import '../services/auth_service.dart';
 
 class RecuperarSenhaView extends StatefulWidget {
   const RecuperarSenhaView({super.key});
@@ -10,10 +10,8 @@ class RecuperarSenhaView extends StatefulWidget {
 }
 
 class _RecuperarSenhaViewState extends State<RecuperarSenhaView> {
-  // Chave para validar o formulário
+  final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
-  
-  // Controller para ler o email
   final _emailController = TextEditingController();
 
   @override
@@ -22,38 +20,17 @@ class _RecuperarSenhaViewState extends State<RecuperarSenhaView> {
     super.dispose();
   }
 
-  // Função que valida e mostra AlertDialog
-  void _solicitarRecuperacao() {
-    // 1. Valida o formulário
-    if (_formKey.currentState?.validate() ?? false) {
-      final email = _emailController.text.trim();
-      final controller = GetIt.instance<IniciarloginController>();
+  Future<void> _solicitarRecuperacao() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
 
-      // 2. Verifica se o email está cadastrado
-      if (!controller.isEmailCadastrado(email)) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('E-mail não cadastrado'),
-              content: const Text(
-                'O e-mail informado não está registrado. Verifique e tente novamente.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);      // fecha o AlertDialog
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
+    final email = _emailController.text.trim();
 
-      // 3. Se válido e cadastrado, mostra AlertDialog de sucesso
+    try {
+      await _authService.sendPasswordResetEmail(email);
+
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -63,12 +40,66 @@ class _RecuperarSenhaViewState extends State<RecuperarSenhaView> {
               'Um link de recuperação foi enviado para:\n\n$email\n\nVerifique sua caixa de entrada.',
             ),
             actions: [
-              TextButton( // botão para fechar o AlertDialog e voltar ao login
+              TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // fecha o AlertDialog
-                  Navigator.pop(context); // volta pra tela de login
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                 },
-                child: const Text('OK'), // texto do botão
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      String title = 'Erro';
+      String message = 'Não foi possível enviar o e-mail de recuperação. Tente novamente.';
+
+      if (e.code == 'user-not-found') {
+        title = 'E-mail não cadastrado';
+        message = 'O e-mail informado não está registrado. Verifique e tente novamente.';
+      } else if (e.code == 'invalid-email') {
+        title = 'E-mail inválido';
+        message = 'O e-mail informado não tem um formato válido.';
+      } else if (e.code == 'too-many-requests') {
+        title = 'Muitas tentativas';
+        message = 'Você tentou muitas vezes. Aguarde alguns instantes e tente novamente.';
+      } else if (e.message != null && e.message!.isNotEmpty) {
+        message = e.message!;
+      }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (_) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro inesperado'),
+            content: const Text('Ocorreu um erro inesperado. Tente novamente mais tarde.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
               ),
             ],
           );

@@ -71,4 +71,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'cesar-manha-prog-disp-moveis.firebasestorage.app',
     iosBundleId: 'com.example.appRadical5Telas',
   );
+
 }

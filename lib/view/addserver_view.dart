@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // 14/04 rf005 - tela de addicionar servidor
 class AddServerView extends StatelessWidget {
@@ -39,8 +41,47 @@ class AddServerView extends StatelessWidget {
               ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  // botão ilustrativo, não faz nada
+                onTap: () async {
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('É necessário estar logado para adicionar servidor.'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  final categoria = categorias[index];
+                  final nome = 'Servidor de $categoria';
+                  final docRef = FirebaseFirestore.instance.collection('servidores').doc();
+                  // RF003: insere documento em 'servidores' com 5 campos exigidos
+                  // id (doc id), nome, nome_lowercase (para busca), categoria, criadoEm e donoId (uid do usuário)
+                  final data = {
+                    'id': docRef.id,
+                    'nome': nome,
+                    'nome_lowercase': nome.toLowerCase(),
+                    'categoria': categoria,
+                    'criadoEm': FieldValue.serverTimestamp(),
+                    'donoId': user.uid,
+                  };
+
+                  try {
+                    await docRef.set(data);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Servidor "$categoria" salvo com sucesso.'),
+                      ),
+                    );
+                  } catch (error) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erro ao salvar servidor: ${error.toString()}'),
+                      ),
+                    );
+                  }
                 },
                 child: Center(
                   child: Text(
