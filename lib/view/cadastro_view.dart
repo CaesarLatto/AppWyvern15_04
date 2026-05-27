@@ -42,7 +42,7 @@ class _CadastroViewState extends State<CadastroView> {
     final controller = GetIt.instance<IniciarloginController>();
 
     try {
-      // RF002: cria credencial com Firebase Auth
+      // Firebase RF 002, Registro de Usuários: cria credencial no Firebase Auth (email+senha)
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: senha,
@@ -56,7 +56,7 @@ class _CadastroViewState extends State<CadastroView> {
         );
       }
 
-      // RF002: salva perfil do usuário em Firestore imediatamente após criação
+      // Firebase RF 002, Registro de Usuários: salva perfil do usuário em Firestore imediatamente após criação
       // Campos: nome, email, nome_lowercase (para busca case-insensitive), criadoEm
       await _firestore.collection('usuarios').doc(uid).set({
         'nome': nome,

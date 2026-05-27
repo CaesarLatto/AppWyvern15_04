@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'chat_servidor_view.dart';
+
 class MenuPrincipalView extends StatelessWidget {
   const MenuPrincipalView({super.key});
 
@@ -31,11 +33,12 @@ class MenuPrincipalView extends StatelessWidget {
       );
     }
 
+    // Firebase RF 005, Recuperação de Dados: stream em tempo real filtrando 'servidores' pelo dono (donoId)
+    // Usado em StreamBuilder para atualizar a UI automaticamente quando documentos mudam
     final stream = FirebaseFirestore.instance
-        .collection('servidores')
-        .where('donoId', isEqualTo: user.uid)
-        .orderBy('criadoEm', descending: true)
-        .snapshots();
+      .collection('servidores')
+      .where('donoId', isEqualTo: user.uid)
+      .snapshots();
 
     return Scaffold(
       appBar: AppBar(
@@ -98,7 +101,13 @@ class MenuPrincipalView extends StatelessWidget {
                     );
                   }
 
-                  final docs = snapshot.data?.docs ?? [];
+                  final docs = List.of(snapshot.data?.docs ?? []);
+                  docs.sort((a, b) {
+                    final aTs = (a.data()['criadoEm'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
+                    final bTs = (b.data()['criadoEm'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
+                    return bTs.compareTo(aTs);
+                  });
+
                   if (docs.isEmpty) {
                     return const Center(
                       child: Text(
@@ -127,6 +136,17 @@ class MenuPrincipalView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatServidorView(
+                                  servidorId: docs[index].id,
+                                  nomeServidor: nome,
+                                ),
+                              ),
+                            );
+                          },
                           title: Text(
                             nome,
                             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),

@@ -43,14 +43,14 @@ class _IniciarloginViewState extends State<IniciarloginView> {
     final controller = GetIt.instance<IniciarloginController>();
 
     try {
-      // RF001: autentica com Firebase Auth; trata erros FirebaseAuthException abaixo
+      // Firebase RF 001, Autenticação de Usuários: autentica com Firebase Auth; trata erros FirebaseAuthException abaixo
       final credential = await _authService.signIn(
         email: email,
         password: senha,
       );
 
       if (!mounted) return;
-      // RF001: armazena estado do usuário (email/nome) no controller para compartilhar entre telas
+      // Firebase RF 001, Autenticação de Usuários: armazena estado do usuário (email/nome) no controller para compartilhar entre telas
       controller.definirUsuarioLogado(email, credential.user?.displayName);
 
       final uid = credential.user?.uid;
@@ -70,7 +70,7 @@ class _IniciarloginViewState extends State<IniciarloginView> {
         SnackBar(content: Text('Login realizado com sucesso! Bem-vindo, ${controller.usuarioLogadoNome.isNotEmpty ? controller.usuarioLogadoNome : email}')),
       );
 
-      // RF001: navega para a tela principal após login bem-sucedido
+      // Firebase RF 001, Autenticação de Usuários: navega para a tela principal após login bem-sucedido
       Navigator.pushReplacementNamed(context, 'menuprincipal');
     } on FirebaseAuthException catch (e) {
       String mensagem;

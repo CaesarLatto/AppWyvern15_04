@@ -26,7 +26,8 @@ class _PesquisaServidorViewState extends State<PesquisaServidorView> {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('servidores');
 
     if (lowerTerm.isNotEmpty) {
-      query = query
+        // Firebase RF 006, Pesquisa de Dados: busca case-insensitive usando campo 'nome_lowercase' e range query
+        query = query
           .where('nome_lowercase', isGreaterThanOrEqualTo: lowerTerm)
           .where('nome_lowercase', isLessThan: '$lowerTerm\uf8ff');
     }

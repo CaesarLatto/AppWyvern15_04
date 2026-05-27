@@ -55,7 +55,7 @@ class AddServerView extends StatelessWidget {
                   final categoria = categorias[index];
                   final nome = 'Servidor de $categoria';
                   final docRef = FirebaseFirestore.instance.collection('servidores').doc();
-                  // RF003: insere documento em 'servidores' com 5 campos exigidos
+                  // Firebase RF 003, Inserção de Dados: insere documento em 'servidores' com os campos exigidos
                   // id (doc id), nome, nome_lowercase (para busca), categoria, criadoEm e donoId (uid do usuário)
                   final data = {
                     'id': docRef.id,

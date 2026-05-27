@@ -86,7 +86,7 @@ class _InformacoesViewState extends State<InformacoesView> {
     }
 
     try {
-      // RF004: atualiza apenas o campo 'nome' no documento do usuário usando .update()
+      // Firebase RF 004, Atualização de Dados: atualiza apenas o campo 'nome' no documento do usuário usando .update()
       await FirebaseFirestore.instance.collection('usuarios').doc(user.uid).update({
         'nome': novoNome,
       });
@@ -99,7 +99,7 @@ class _InformacoesViewState extends State<InformacoesView> {
 
       // Atualizar displayName no Firebase Auth para manter consistência
       try {
-        // RF004 (opcional): manter displayName do Firebase Auth consistente com Firestore
+        // Firebase RF 004, Atualização de Dados (opcional): manter displayName do Firebase Auth consistente com Firestore
         await user.updateDisplayName(novoNome);
       } catch (_) {
         // não bloquear a UX se o update do Auth falhar
